@@ -20,10 +20,10 @@ int main(){
   int n, r, x[100];
 
   printf("Entre com o valor de n: \n");
-  scanf("%d\n", &n);
+  scanf("%d", &n);
 
   printf("Entre com o valor de r: \n");
-  scanf("%d\n", &r);
+  scanf("%d", &r);
 
   combinacao(n, r, x, 0, 0);
 }

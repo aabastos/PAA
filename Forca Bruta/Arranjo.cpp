@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int combinacao(int n, int r, int x[], int flag[], int k){
+int arranjo(int n, int r, int x[], int flag[], int k){
   int i;
 
   if(k == r){
@@ -13,7 +13,7 @@ int combinacao(int n, int r, int x[], int flag[], int k){
       if(flag[i] != 1){
         x[k] = i;
         flag[i] = 1;
-        combinacao(n, r, x, flag, k+1);
+        arranjo(n, r, x, flag, k+1);
         flag[i] = 0;
       }
     }
@@ -35,5 +35,5 @@ int main(){
     flag[i] = 0;
   }
 
-  combinacao(n, r, x, flag, 1);
+  arranjo(n, r, x, flag, 1);
 }
