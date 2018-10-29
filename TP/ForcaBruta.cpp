@@ -81,7 +81,7 @@ int main(){
 
   float resultado, min_dist = MAX;
   int x[numCidades], flag[numCidades];
-  int *caminho = new int[4];
+  int *caminho = new int[numCidades];
 
   for(int i = 0; i < numCidades; i++){
     flag[i] = 0;
