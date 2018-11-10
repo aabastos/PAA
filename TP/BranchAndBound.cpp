@@ -5,6 +5,17 @@
 #define MAX FLT_MAX
 
 /*
+Estrutura para armazenamento das coordenadas das cidades
+*/
+
+struct Cidade{
+  int coord_x;
+  int coord_y;
+};
+
+typedef Cidade Cidade;
+
+/*
 Função para cálculo da distância entre duas cidades.
 Parâmetros:
   - x1 -> coordenada x da cidade1
@@ -20,8 +31,7 @@ float distancia(int x1, int x2, int y1, int y2){
 /*
 Função que utiliza a técnica de branch and bound para achar a menor distância que será percorrida pelo carteiro
 Parâmetros:
-  - coord_x -> vetor que armazena as coordenadas x das cidades
-  - coord_y -> vetor que armazena as coordenadas y das cidades
+  - distancias -> matriz que armazena as distancias entre as cidades
   - n -> numero de cidades
   - i -> ultima cidade inserida no caminho
   - j -> número de cidades inseridas no caminho
@@ -31,16 +41,16 @@ Parâmetros:
   - min_dist -> menor distancia encontrada (limite inferior)
   - caminho -> caminho final encontrado
 */
-void branchbound(int coord_x[], int coord_y[], int n, int i, int j, int x[], int flag[], float dist, float &min_dist, int *caminho){
+void branchbound(double **distancias, int n, int i, int j, int x[], int flag[], float dist, float &min_dist, int *caminho){
   for(int k = 1; k < n; k++){
     if(flag[k] != 1){
       flag[k] = 1;                                                                          // Identifcando que a cidade entrou no caminho
-      float new_dist = dist + distancia(coord_x[i], coord_x[k], coord_y[i], coord_y[k]);    // Calcula distancia entre a ultima cidade que entrou no caminho e a nova que está entrando
+      float new_dist = dist + distancias[i][k];                                             // Calcula distancia entre a ultima cidade que entrou no caminho e a nova que está entrando
 
       if(new_dist < min_dist){                                                              // Verifica se distancia continua menor que a menor distancia encontrada
         x[j] = k;                                                                           // Inserindo cidade no caminho
         if(j == n - 1){                                                                     // Verifica se e a ultima cidade do problema
-          new_dist += distancia(coord_x[k], coord_x[0], coord_y[k], coord_y[0]);            // Calcula a distancia de retorno para a cidade de origem
+          new_dist += distancias[k][0];                                                     // Calcula a distancia de retorno para a cidade de origem
 
           if(new_dist < min_dist){                                                          // Verfica se distancia continua menor que a menor distancia encontrada
             min_dist = new_dist;
@@ -50,7 +60,7 @@ void branchbound(int coord_x[], int coord_y[], int n, int i, int j, int x[], int
             }
           }
         }else{                                                                               // Se não for a ultima cidade do problema
-          branchbound(coord_x, coord_y, n, k, j+1, x, flag, new_dist, min_dist, caminho);    // Chama a recursividade para inserir a proxima cidade
+          branchbound(distancias, n, k, j+1, x, flag, new_dist, min_dist, caminho);          // Chama a recursividade para inserir a proxima cidade
         }
       }
 
@@ -63,12 +73,26 @@ void branchbound(int coord_x[], int coord_y[], int n, int i, int j, int x[], int
 int main(){
   int numCidades;
   scanf("%d\n", &numCidades);
-  int coord_x[numCidades];
-  int coord_y[numCidades];
 
+  Cidade cidades[numCidades];
 
+  // Leitura das coordenadas das cidades
   for(int i = 0; i < numCidades; i++){
-    scanf("%d %d", &coord_x[i], &coord_y[i]);
+    scanf("%d %d", &cidades[i].coord_x, &cidades[i].coord_y);
+  }
+
+  double **distancias = new double*[numCidades];                                                // Matriz para armazenamento das distâncias
+
+  // Reserva de espaço de memória para a matriz
+  for(int i = 0; i < numCidades; i++){
+    distancias[i] = new double[numCidades];
+  }
+
+  // Calculo da matriz de distancias
+  for(int i = 0; i < numCidades; i++){
+    for(int j = 0; j < numCidades; j++){
+      distancias[i][j] = distancia(cidades[i].coord_x, cidades[j].coord_x, cidades[i].coord_y, cidades[j].coord_y);
+    }
   }
 
   float resultado = MAX;
@@ -81,7 +105,7 @@ int main(){
   flag[0] = 1;
   x[0] = 0;
 
-  branchbound(coord_x, coord_y, numCidades, 0, 1, x, flag, 0, resultado, caminho);
+  branchbound(distancias, numCidades, 0, 1, x, flag, 0, resultado, caminho);
   printf("%.2f\n", resultado);
 
   for(int i = 0; i < numCidades; i++){
