@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 #define MAX FLT_MAX
 
 /*
@@ -105,12 +106,18 @@ int main(){
   flag[0] = 1;
   x[0] = 0;
 
+  clock_t Ticks[2];
+  Ticks[0] = clock();
   branchbound(distancias, numCidades, 0, 1, x, flag, 0, resultado, caminho);
+  Ticks[1] = clock();
+  double tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+
   printf("%.2f\n", resultado);
 
   for(int i = 0; i < numCidades; i++){
     printf("%d ", caminho[i]);
   }
-
   printf("\n");
+
+  printf("Tempo gasto: %.2f\n", tempo);
 }
