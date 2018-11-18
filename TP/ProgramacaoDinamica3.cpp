@@ -26,6 +26,7 @@ Celula *vetorCusto;
 float **distancias;
 vector <vector <int> > matrizCombinacoes;
 int numCombinacoes, numCidades, controle = 0;
+int *index;
 
 /*
 Função para cálculo da distância entre duas cidades.
@@ -84,7 +85,6 @@ void combinacoes(int n, int r, vector <int> x, int next, int k, int origem){
   if(k == r){
     matrizCombinacoes[numCombinacoes - 1] = x;
     numCombinacoes++;
-    // matrizCombinacoes.resize(numCombinacoes);
   }else{
     for(i = next; i < n; i++){
       if(i != origem){
@@ -100,27 +100,22 @@ void calculoVetorCusto(){
   matrizCombinacoes.resize(numCidades - 2);
   numCombinacoes = 1;
 
-
   for(int i = 1; i < numCidades; i++){
     vector <int> x;
     x.resize(tamConjunto);
     combinacoes(numCidades, 1, x, 1, 0, i);
 
-
-    // printf("Cidade: %d\n", i+1);
-    // printf("Numero de conjuntos: %d\n", matrizCombinacoes.size() - 1);
-    // printf("Conjunto: ");
     for(int j = 0; j < matrizCombinacoes.size(); j++){
-      // printf("%d ", matrizCombinacoes[j][0] + 1);
       vetorCusto[controle].custo = distancias[i][matrizCombinacoes[j][0]] + distancias[matrizCombinacoes[j][0]][0];
       vetorCusto[controle].cidadeOrigem = i;
       vetorCusto[controle].conjunto = matrizCombinacoes[j];
+
+      index[i] = controle;
 
       controle++;
     }
 
     numCombinacoes = 1;
-    // printf("\n\n");
   }
 
   tamConjunto++;
@@ -133,23 +128,15 @@ void calculoVetorCusto(){
     matrizCombinacoes.resize(calcularNumCombinacoes(numCidades - 2, tamConjunto));
     for(int i = 1; i < numCidades; i++){
       combinacoes(numCidades, tamConjunto, x, 1, 0, i);
-
-      // printf("Cidade: %d\n", i+1);
-      // printf("Numero de conjuntos: %d\n", matrizCombinacoes.size());
-      // printf("Conjunto: ");
       for(int j = 0; j < matrizCombinacoes.size(); j++){
-        // printf(".\n");
         float minCusto = FLT_MAX;
         for(int k = 0; k < tamConjunto; k++){
-
-          // printf("%d ", matrizCombinacoes[j][k] + 1);
-
           int cidadeOrigem = matrizCombinacoes[j][k];
           vector <int> auxVetor = retiraElemento(matrizCombinacoes[j], matrizCombinacoes[j][k]);
 
           bool achou = false;
-          for(int l = aux - 1; l >= 0 && achou == false; l--){
-            if(vetorCusto[l].cidadeOrigem == cidadeOrigem && vetorCusto[l].conjunto == auxVetor){
+          for(int l = index[cidadeOrigem]; l >= 0 && achou == false; l--){
+            if(cidadeOrigem == vetorCusto[l].cidadeOrigem && vetorCusto[l].conjunto == auxVetor){
               achou = true;
               float custo = distancias[i][cidadeOrigem] + vetorCusto[l].custo;
 
@@ -160,17 +147,16 @@ void calculoVetorCusto(){
           }
         }
 
+        index[i] = controle;
+
         vetorCusto[controle].custo = minCusto;
         vetorCusto[controle].cidadeOrigem = i;
         vetorCusto[controle].conjunto = matrizCombinacoes[j];
 
         controle++;
-        // printf("\n\n");
       }
 
       numCombinacoes = 1;
-      // matrizCombinacoes.clear();
-      // matrizCombinacoes.resize(numCombinacoes);
     }
 
     tamConjunto++;
@@ -187,8 +173,8 @@ void calculoVetorCusto(){
       vector <int> auxVetor = retiraElemento(matrizCombinacoes[j], matrizCombinacoes[j][k]);
 
       bool achou = false;
-      for(int i = controle - 1; i >=0 && achou == false; i--){
-        if(vetorCusto[i].cidadeOrigem == cidadeOrigem && vetorCusto[i].conjunto == auxVetor){
+      for(int i = index[cidadeOrigem]; i >=0 && achou == false; i--){
+        if(cidadeOrigem == vetorCusto[i].cidadeOrigem && vetorCusto[i].conjunto == auxVetor){
           achou = true;
           float custo = distancias[0][cidadeOrigem] + vetorCusto[i].custo;
 
@@ -239,30 +225,14 @@ int main(){
   }
   tamanho = tamanho + 1;
 
+  index = new int[numCidades];
   vetorCusto = new Celula[tamanho];
-
-  float resultado ;
-  int x[numCidades], flag[numCidades];
-  int caminho[numCidades];
-
-  for(int i = 0; i < numCidades; i++){
-    flag[i] = 0;
-  }
-  flag[0] = 1;
-  x[0] = 0;
 
   clock_t Ticks[2];
   Ticks[0] = clock();
   calculoVetorCusto();
   Ticks[1] = clock();
   double tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
-
-  // printf("%.2f\n", resultado);
-
-  // for(int i = 0; i < numCidades; i++){
-  //   printf("%d ", caminho[i]);
-  // }
-  // printf("\n");
 
   printf("Tempo gasto: %.2f\n", tempo);
 }
