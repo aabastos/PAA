@@ -59,25 +59,22 @@ vector <int> retiraElemento(vector <int> vetor, int elemento){
 }
 
 int calcularNumCombinacoes (int numEle, int tamConj) {
-  int dividendo = 1;
-
-  for(int i = numEle; i >= 1; i--){
-    dividendo *= i;
+  int combinacaoDividendo = 1;
+  int combinacaDivisor = 1;
+  int aux = tamConj;
+  for (int x = 0; x < tamConj; x++){
+    if (numEle != aux) {
+      combinacaoDividendo *= numEle--;
+    } else if (numEle == aux) {
+      numEle--;
+      aux--;
+    }
   }
-
-  int aux1 = 1;
-  for(int i = tamConj; i >= 1; i--){
-    aux1 *= i;
+  int aux2 = aux;
+  for (int x = 0; x < aux2; x++) {
+    combinacaDivisor *= aux--;
   }
-
-  int aux2 = 1;
-  for(int i = numEle - tamConj; i >= 1; i--){
-    aux2 *= i;
-  }
-
-  int divisor = aux1 * aux2;
-
-  return (dividendo / divisor);
+  return (combinacaoDividendo/combinacaDivisor);
 }
 
 void combinacoes(int n, int r, vector <int> x, int next, int k, int origem){
@@ -224,6 +221,8 @@ int main(){
     tamanho += (numCidades - 1) * calcularNumCombinacoes(numCidades - 2, i);
   }
   tamanho = tamanho + 1;
+
+  printf("Tamanho: %d\n", tamanho);
 
   index = new int[numCidades];
   vetorCusto = new Celula[tamanho];
