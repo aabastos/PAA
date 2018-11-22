@@ -17,8 +17,8 @@ struct Cidade{
 typedef Cidade Cidade;
 
 /*
-Função para cálculo da distância entre duas cidades.
-Parâmetros:
+Funcao para calculo da distancia entre duas cidades.
+Parametros:
   - x1 -> coordenada x da cidade1
   - x2 -> coordenada x da cidade2
   - y1 -> coordenada y da cidade1
@@ -30,14 +30,14 @@ float distancia(int x1, int x2, int y1, int y2){
 }
 
 /*
-Função que utiliza a técnica de branch and bound para achar a menor distância que será percorrida pelo carteiro
-Parâmetros:
+Funcao que utiliza a técnica de branch and bound para achar a menor distancia que sera percorrida pelo carteiro
+Parametros:
   - distancias -> matriz que armazena as distancias entre as cidades
   - n -> numero de cidades
   - i -> ultima cidade inserida no caminho
   - j -> número de cidades inseridas no caminho
   - x -> vetor que armazena as cidades presentes no caminho
-  - flag -> vetor flag que identifica se uma cidade está ou não presente no caminho
+  - flag -> vetor flag que identifica se uma cidade esta ou nao presente no caminho
   - dist -> distancia atual do caminho
   - min_dist -> menor distancia encontrada (limite inferior)
   - caminho -> caminho final encontrado
@@ -46,7 +46,7 @@ void branchbound(double **distancias, int n, int i, int j, int x[], int flag[], 
   for(int k = 1; k < n; k++){
     if(flag[k] != 1){
       flag[k] = 1;                                                                          // Identifcando que a cidade entrou no caminho
-      float new_dist = dist + distancias[i][k];                                             // Calcula distancia entre a ultima cidade que entrou no caminho e a nova que está entrando
+      float new_dist = dist + distancias[i][k];                                             // Calcula distancia entre a ultima cidade que entrou no caminho e a nova que esta entrando
 
       if(new_dist < min_dist){                                                              // Verifica se distancia continua menor que a menor distancia encontrada
         x[j] = k;                                                                           // Inserindo cidade no caminho
@@ -60,17 +60,17 @@ void branchbound(double **distancias, int n, int i, int j, int x[], int flag[], 
               caminho[l] = x[l] + 1;
             }
           }
-        }else{                                                                               // Se não for a ultima cidade do problema
+        }else{                                                                               // Se nao for a ultima cidade do problema
           branchbound(distancias, n, k, j+1, x, flag, new_dist, min_dist, caminho);          // Chama a recursividade para inserir a proxima cidade
         }
       }
 
-      flag[k] = 0;                                                                            // Identifica que a cidade está saindo do caminho
+      flag[k] = 0;                                                                            // Identifica que a cidade esta saindo do caminho
     }
   }
 }
 
-// Função principal
+// Funcao principal
 int main(){
   int numCidades;
   scanf("%d\n", &numCidades);
@@ -82,7 +82,7 @@ int main(){
     scanf("%d %d", &cidades[i].coord_x, &cidades[i].coord_y);
   }
 
-  double **distancias = new double*[numCidades];                                                // Matriz para armazenamento das distâncias
+  double **distancias = new double*[numCidades];                                                // Matriz para armazenamento das distancias
 
   // Reserva de espaço de memória para a matriz
   for(int i = 0; i < numCidades; i++){
